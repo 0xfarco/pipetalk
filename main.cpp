@@ -1,6 +1,9 @@
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <unistd.h>
+#include <ctime>
+#include <iomanip>
 
 #define BUFFERSIZE 100
 
@@ -25,7 +28,8 @@ int main() {
 
             read(parentToChild[0], buffer, sizeof(buffer));
 
-            std::cout << "Parent: " << buffer << std::endl;
+            std::cout << "[" << getTimestamp() << "] "
+            << "Parent: " << buffer << std::endl;
 
             getline(std::cin, msg);
 
@@ -47,11 +51,22 @@ int main() {
 
             read(childToParent[0], buffer, sizeof(buffer));
 
-            std::cout << "Child: " << buffer << std::endl;
+            std::cout << "[" << getTimestamp() << "] "
+            << "Child: " << buffer << std::endl;
         }
 
         close(parentToChild[1]);
         close(childToParent[0]);
     }
     return 0;
+}
+
+std::string getTimestamp() {
+    auto now = std::time(nullptr);
+    std::tm localTime {};
+    localtime_r(&now, &localTime);
+    std::ostringstream oss;
+    oss << std::put_time(&localTime, "%H:%M:%S");
+
+    return oss.str();
 }
