@@ -8,6 +8,7 @@
 #define BUFFERSIZE 100
 
 std::string getTimestamp();
+bool handleCommand(const std::string& cmd);
 
 int main() {
     int parentToChild[2];
@@ -33,6 +34,8 @@ int main() {
 
             getline(std::cin, msg);
 
+            if (handleCommand(msg)) continue;
+
             write(childToParent[1], msg.c_str(), msg.size() + 1);
 
             if (msg == "/exit") break;
@@ -48,6 +51,8 @@ int main() {
             char buffer[BUFFERSIZE] {};
 
             getline(std::cin, msg);
+
+            if (handleCommand(msg)) continue;
 
             write(parentToChild[1], msg.c_str(), msg.size() + 1);
 
@@ -73,4 +78,39 @@ std::string getTimestamp() {
     oss << std::put_time(&localTime, "%H:%M:%S");
 
     return oss.str();
+}
+
+bool handleCommand(const std::string& cmd) {
+    if (cmd == "/help") {
+        std::cout << "\nAvailable commands:\n"
+        << "/help  - Show commands\n"
+        << "/users - Show connected users\n"
+        << "/clear - Clear screen\n"
+        << "/time  - Show current time\n"
+        << "/exit  - Leave chat\n\n";
+        return true;
+    }
+
+    if (cmd == "/users") {
+        std::cout << "Connected users: Parent, Child\n";
+        return true;
+    }
+
+    if (cmd == "/clear") {
+        #ifdef __linux__
+        system("clear");
+        #else
+        system("cls");
+        #endif
+        return true;
+    }
+
+    if (cmd == "/time") {
+        std::cout << "Current time: "
+        << getTimestamp()
+        << '\n';
+        return true;
+    }
+
+    return false;
 }
