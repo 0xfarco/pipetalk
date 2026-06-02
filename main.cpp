@@ -34,6 +34,8 @@ int main() {
             getline(std::cin, msg);
 
             write(childToParent[1], msg.c_str(), msg.size() + 1);
+
+            if (msg == "/exit") break;
         }
         close(parentToChild[0]);
         close(childToParent[1]);
@@ -48,6 +50,8 @@ int main() {
             getline(std::cin, msg);
 
             write(parentToChild[1], msg.c_str(), msg.size() + 1);
+
+            if (msg == "/exit") break;
 
             read(childToParent[0], buffer, sizeof(buffer));
 
